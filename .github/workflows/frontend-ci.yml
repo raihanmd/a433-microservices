@@ -23,6 +23,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - run: docker build -t ghcr.io/${{ github.actor }}/karsajobs-ui:latest .
       - run: docker push ghcr.io/${{ github.actor }}/karsajobs-ui:latest
