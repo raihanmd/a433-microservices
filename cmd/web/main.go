@@ -45,14 +45,25 @@ func main() {
 }
 
 func openDB() (*mongo.Client, error) {
-	client, err := mongo.NewClient(options.Client().ApplyURI(fmt.Sprintf("mongodb://%s:%s@%s:27017/?authsource=admin", os.Getenv("MONGO_USER"), os.Getenv("MONGO_PASS"), os.Getenv("MONGO_HOST"))))
+	uri := fmt.Sprintf("mongodb://%s:%s@%s:27017/?authsource=admin",
+		os.Getenv("MONGO_USER"),
+		os.Getenv("MONGO_PASS"),
+		os.Getenv("MONGO_HOST"),
+	)
+
+	fmt.Println("connecting to Mongo URI:", uri)
+
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
+		fmt.Println("error creating new Mongo client:", err)
 		return nil, err
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
 	if err = client.Connect(ctx); err != nil {
+		fmt.Println("error connecting to Mongo:", err)
 		return nil, err
 	}
 
